@@ -1,20 +1,16 @@
 import os, sys, logging, get_file_list
-from python_compat import any, imap, lmap, set, sorted
+from python_compat import any, imap, lmap, sorted
 
 
 def display_unused_exports(used_imports, available_imports):
-	for (_, imports) in used_imports.items():
-		for module in available_imports:
-			# if module.__name__.endswith(import_src):
-			for item in imports:
-				try:
-					available_imports[module].remove(item)
-				except Exception:
-					pass
-	print '-' * 29
-	for module, module_x in available_imports.items():
-		if module_x:
-			print "superflous exports", module.__name__, module_x
+	for (module, export_list) in available_imports.items():
+		for export in export_list:
+			for (import_src, import_list) in used_imports.items():
+				if import_src.endswith(module.__name__):
+					if export not in import_list:
+						print "superflous exports", import_src, ':', export
+					elif import_list.count(export) == 1:
+						print "single exports", import_src, ':', export
 
 
 def main():
@@ -31,7 +27,7 @@ def main():
 			if ('import' in line) and ('from' in line):
 				import_lines = lmap(str.strip, line.split('import')[1].split(','))
 				import_src = line.split('from')[1].split('import')[0].strip()
-				used_imports.setdefault(import_src, set()).update(import_lines)
+				used_imports.setdefault(import_src, []).extend(import_lines)
 
 		module = None
 		if ('/scripts/' in fn) and not fn.endswith('gc_scripts.py'):

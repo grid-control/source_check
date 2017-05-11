@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+__import__('sys').path.append(__import__('os').path.join(__import__('os').path.dirname(__file__), '..'))
+__import__('testfwk').setup(__file__)
+# - prolog marker
 import shutil
 from testfwk import create_config, run_test, testfwk_create_workflow
 from grid_control.workflow import Workflow
