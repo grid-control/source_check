@@ -41,9 +41,9 @@ for plugin in plugin_infos:
 		alias_list = plugin_infos[plugin].get('alias', [])
 		if alias_list:
 			alias_list = filter(lambda x: x, alias_list)
-			plugin_name = plugin
+			plugin_name = '%s_' % plugin
 			if alias_list:
-				plugin_name = '%s (alias: %s)' % (plugin, str.join(', ', alias_list))
+				plugin_name = '%s_ (alias: %s)' % (plugin, str.join(', ', alias_list))
 			available_plugins.setdefault(base, []).append(plugin_name)
 
 user = get_json('docgen_user.json')
@@ -285,6 +285,7 @@ def display_location(location_list):
 	if '.' in location_list[0]:
 		print cc_by_location.get(location_list[0])
 		raise Exception('Invalid location %r' % location_list[0])
+	print('.. _%s:' % location_list[0])
 	print('%s options' % location_list[0])
 	print('-'*len('%s options' % location_list[0]))
 	print('')
