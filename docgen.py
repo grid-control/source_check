@@ -276,7 +276,7 @@ def display_option(cc):
 	else:
 		if sys.argv[1:] == ['stop']:
 			print cc['option'], 'no desc'
-			raise
+			raise Exception(cc['option']+' no desc')
 		elif sys.argv[1:] == ['count']:
 			print('N/A')
 
