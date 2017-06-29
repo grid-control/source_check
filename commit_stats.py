@@ -1,4 +1,4 @@
-import os, math, get_file_list
+import os, math, logging, get_file_list
 from python_compat import imap, sorted
 
 
@@ -57,12 +57,13 @@ def parse_info():
 
 def write_hiscore(stream, changes_a_dict, email_dict, sort_fun):
 	for author in sorted(changes_a_dict, key=sort_fun):
+		log_msg = '(%6d:%6d) ' % changes_a_dict[author]
+		log_msg += '%7.1f ' % (-sort_fun(author)[0])
 		word_cloud_weight = int(1 + 1 * math.log(1 - sort_fun(author)[0]))
-		print '(%6d:%6d)' % changes_a_dict[author],
-		print changes_a_dict[author][0] - 0.5 * changes_a_dict[author][1],
-		msg = ' ' * 15 + '%-23s <%s>\n' % (author.decode('utf-8'), email_dict[author].lower())
-		print '%s:%s' % (author.replace(' ', ''), word_cloud_weight)
-		yield msg
+		log_msg += '%s:%s' % (author.replace(' ', ''), word_cloud_weight)
+		logging.warning(log_msg)
+		notice_msg = ' ' * 15 + '%-23s <%s>\n' % (author.decode('utf-8'), email_dict[author].lower())
+		yield notice_msg
 	yield '\n'
 	yield ' ' * 15 + '(in order of development activity - excluding libraries)'
 

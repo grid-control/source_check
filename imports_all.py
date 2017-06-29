@@ -2,17 +2,6 @@ import os, sys, logging, get_file_list
 from python_compat import any, imap, lmap, sorted
 
 
-def display_unused_exports(used_imports, available_imports):
-	for (module, export_list) in available_imports.items():
-		for export in export_list:
-			for (import_src, import_list) in used_imports.items():
-				if import_src.endswith(module.__name__):
-					if export not in import_list:
-						print "superflous exports", import_src, ':', export
-					elif import_list.count(export) == 1:
-						print "single exports", import_src, ':', export
-
-
 def main():
 	stored_sys_path = list(sys.path)
 	available_imports = {}
@@ -43,13 +32,22 @@ def main():
 			mod_sort = sorted(mod_all, key=str.lower)
 			available_imports[module] = mod_sort
 			if mod_all != mod_sort:
-				print fn, module
-				print "Unsorted", fn
-				print "  -", mod_all
-				print "  +", mod_sort
-				print
+				logging.warning('%s %s', fn, module)
+				logging.warning('unsorted:')
+				logging.warning('  - %s', mod_all)
+				logging.warning('  + %s', mod_sort)
 		sys.path = list(stored_sys_path)
-	display_unused_exports(used_imports, available_imports)
+	_display_unused_exports(used_imports, available_imports)
+
+
+def _display_unused_exports(used_imports, available_imports):
+	for (module, export_list) in available_imports.items():
+		for export in export_list:
+			for (import_src, import_list) in used_imports.items():
+				if import_src.endswith(module.__name__):
+					import_count = import_list.count(export)
+					if import_count < 2:
+						logging.warning('export use count %d %30s : %s', import_count, import_src, export)
 
 
 if __name__ == '__main__':

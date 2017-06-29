@@ -1,4 +1,4 @@
-import sys, subprocess
+import sys, logging, subprocess
 from python_compat import imap
 
 
@@ -29,12 +29,11 @@ def main():
 			continue
 		sys.stdout.write(fn + ' ')
 		sys.stdout.flush()
-		tab_count += update_header(fn)
+		tab_count += _update_header(fn)
 		sys.stdout.write('OK\n')
-	print tab_count, 'tabs'
 
 
-def update_header(fn):
+def _update_header(fn):
 	licence_update_revs = [
 		'421bfb25b9ba81c68225f77bc5142a9c9b68e183',
 		'a5cbd19838ca2fe1f30857c19882e008214c11eb',
@@ -50,7 +49,7 @@ def update_header(fn):
 			year = year_a + '-' + year_b
 		header = HEADER_TEMPLATE % year
 	except:
-		print 'no version', fn
+		logging.warning('no version: %s', fn)
 		raise
 	do_insert = True
 	data = open(fn).readlines()
@@ -58,7 +57,7 @@ def update_header(fn):
 	tab_count = 0
 	for line in data:
 		tab_count += line.count('\t')
-		if 'print "%s"' % fn in line:
+		if ('pri' + 'nt "%s"') % fn in line:
 			continue
 		if line.startswith('#-#') or line.startswith('# |'):
 			continue
@@ -72,5 +71,5 @@ def update_header(fn):
 			fp.write(line)
 	fp.close()
 	if data != open(fn).readlines():
-		print 'changed', fn
+		logging.warning('changed %s', fn)
 	return tab_count

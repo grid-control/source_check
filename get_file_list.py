@@ -7,17 +7,26 @@ def get_file_list(gc_base_path='../..', **kwargs):
 	gc_base_path = clean_path(gc_base_path)
 	sys.path.append(clean_path(os.path.join(gc_base_path, 'packages')))
 
-	def _iter_all_files():
-		for entry in ['scripts', 'packages', 'testsuite']:
-			if os.path.exists(os.path.join(gc_base_path, entry)):
-				for (root, _, files) in os.walk(os.path.join(gc_base_path, entry)):
-					for fn in files:
-						yield os.path.join(root, fn)
-		yield os.path.join(gc_base_path, 'go.py')
-		yield os.path.join(gc_base_path, 'GC')
+	if len(sys.argv) > 1:
+		def _iter_all_files():
+			for fn in sys.argv[1:]:
+				yield clean_path(fn)
+
+		def _match_file(*args, **kwargs):
+			return True
+	else:
+		def _iter_all_files():
+			for entry in ['scripts', 'packages', 'testsuite']:
+				if os.path.exists(os.path.join(gc_base_path, entry)):
+					for (root, _, files) in os.walk(os.path.join(gc_base_path, entry)):
+						for fn in files:
+							yield os.path.join(root, fn)
+			yield os.path.join(gc_base_path, 'go.py')
+			yield os.path.join(gc_base_path, 'GC')
+		_match_file = match_file
 
 	for fn in imap(lambda fn: relpath(clean_path(fn), gc_base_path), _iter_all_files()):
-		if match_file(fn, **kwargs):
+		if _match_file(fn, **kwargs):
 			yield (os.path.join(gc_base_path, fn), fn)
 
 

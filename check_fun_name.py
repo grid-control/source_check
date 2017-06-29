@@ -1,4 +1,4 @@
-import get_file_list
+import logging, get_file_list
 from grid_control.utils.file_tools import SafeFile
 
 
@@ -18,7 +18,7 @@ def main():
 			parent = ident_map.get(ident_level - 1, '')
 			if line.startswith('def ') and parent.startswith('def '):
 				if not line.startswith('def _'):
-					print fnrel, ident_map
+					logging.warning('%r %r', fnrel, ident_map)
 
 
 if __name__ == '__main__':

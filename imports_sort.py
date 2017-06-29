@@ -1,19 +1,20 @@
+import logging
 from grid_control.utils.file_tools import SafeFile
 from python_compat import ifilter, imap, lfilter, lmap, set, sorted
 
 
 def main():
-	import logging, get_file_list
+	import get_file_list
 	for (fn, fnrel) in get_file_list.get_file_list(show_type_list=['py'],
 			show_external=False, show_aux=False, show_source_check=True):
 		logging.debug(fnrel)
-		sort_import_lines(fn)
-		sort_from_lines(fn)
-		sort_python_compat_lines(fn)
+		_sort_import_lines(fn)
+		_sort_from_lines(fn)
+		_sort_python_compat_lines(fn)
 
 
-def sort_from_lines(fn):
-	# sort "from" order
+def _sort_from_lines(fn):
+	# sort 'from' order
 	replacement_str_pair_list = []
 	raw = SafeFile(fn).read_close()
 	for import_line in ifilter(lambda line: line.startswith('from '), raw.splitlines()):
@@ -30,15 +31,15 @@ def sort_from_lines(fn):
 				new_import_line += '  # ' + _comment
 			replacement_str_pair_list.append((import_line, new_import_line))
 		except:
-			print fn, import_line
+			logging.warning('%s: %s', fn, import_line)
 			raise
 	for (old, new) in replacement_str_pair_list:
 		raw = raw.replace(old, new)
 	open(fn, 'w').write(raw)
 
 
-def sort_import_lines(fn):
-	# sort "import" order
+def _sort_import_lines(fn):
+	# sort 'import' order
 	replacement_str_pair_list = []
 	raw = SafeFile(fn).read_close()
 	for import_line in ifilter(lambda line: line.startswith('import '), raw.splitlines()):
@@ -50,7 +51,7 @@ def sort_import_lines(fn):
 	open(fn, 'w').write(raw)
 
 
-def sort_python_compat_lines(fn):
+def _sort_python_compat_lines(fn):
 	output_line_list = []
 	output_set = set()
 	import_section = False

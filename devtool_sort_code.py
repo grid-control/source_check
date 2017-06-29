@@ -1,8 +1,10 @@
-import os, sys
+#!/usr/bin/env python
+
+import os, sys, logging
 from python_compat import any, lfilter, lmap, next, sorted
 
 
-def collect_and_sort_onelevel(source_iter, do_print=False):
+def collect_and_sort_onelevel(source_iter, do_display=False):
 	sort_helper = []
 
 	def _do_sort(sort_helper):
@@ -19,14 +21,14 @@ def collect_and_sort_onelevel(source_iter, do_print=False):
 						cls_name = cls_parts[0]
 						cls_tree[cls_name.lower()] = cls_tree.get(cls_parts[1].lower(), [cls_parts[1]]) + [cls_name]
 				except Exception:
-					print "Error while processing", cls_tree, defclass
+					logging.warning('Error while processing %r %r', cls_tree, defclass)
 					raise
 
 			for entry in sorted(sort_helper, key=lambda k: keyfun(cls_tree, k)):
-				if do_print:
+				if do_display:
 					key = keyfun(cls_tree, entry)
 					if (key[1] == 1) and not key[0]:
-						print key[-1]
+						logging.warning(key[-1])
 				yield entry
 
 	while True:
@@ -62,7 +64,7 @@ def keyfun(cls_tree, value):
 		return (is_private, 0, tuple(cls_bases), name)
 	elif tmp[0] != 'class':  # functions
 		if not is_private:
-			print '\tfun:', name
+			logging.warning('\tfun: %s', name)
 		return (is_private, 1, name_prio.get(name, 0), name)
 	else:  # classes
 		return (is_private, 2, (cls_base_outside, len(cls_bases), tuple(cls_bases)), name)
