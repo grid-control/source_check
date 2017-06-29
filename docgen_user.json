@@ -91,7 +91,7 @@
 				},
 				{
 					"desc_line": "Specifiy the order of the filtered list",
-					"opt_line": "``%(option_display)s order`` = <enum: <enum_values:ListOrder>> (Default: '%(default_order)s')"
+					"opt_line": "``%(option_display)s order`` = <enum: <enum_values:ListOrder>> (Default: <enum:ListOrder:%(default_order)s>)"
 				}
 			],
 			"short": "<filter option>"
@@ -172,16 +172,48 @@
 		}
 	},
 	"enums": {
+		"LogLevelEnum": {
+			"enum_values": "LEVEL 0..50|NOTSET|DEBUG3...DEBUG|INFO3..INFO|DEFAULT|WARNING|ERROR|CRITICAL",
+			"enum_values_raw": [
+				"LEVEL 0",
+				"LEVEL 1",
+				"LEVEL 2",
+				"NOTSET",
+				"DEBUG3",
+				"DEBUG2",
+				"DEBUG1",
+				"DEBUG",
+				"INFO3",
+				"INFO2",
+				"INFO1",
+				"INFO",
+				"DEFAULT",
+				"WARNING",
+				"ERROR",
+				"CRITICAL"
+			]
+		},
 		"LumiKeep": {
-			"<desc>": "This enums allows to specify how much CMS metadata should be retained",
-			"RunLumi": "Keep both run and lumi information"
+			"enum_desc": "This enums allows to specify how much CMS metadata should be retained",
+			"enum_value_desc": {
+				"RunLumi": "Keep both run and lumi information"
+			}
 		},
 		"ResyncMode": {
-			"<desc>": "This enums allows to specify how to handle changes in the underlying dataset",
-			"changed": "only jobs with changes in the area are reprocessed",
-			"complete": "all jobs with affected files need to be reprocessed",
-			"disable": "disable affected jobs",
-			"ignore": "ignore changes"
+			"enum_alias": {
+				"<attr:no_changed>": [
+					"DISABLE",
+					"COMPLETE",
+					"IGNORE"
+				]
+			},
+			"enum_desc": "This enums allows to specify how to handle changes in the underlying dataset",
+			"enum_value_desc": {
+				"changed": "only jobs with changes in the area are reprocessed",
+				"complete": "all jobs with affected files need to be reprocessed",
+				"disable": "disable affected jobs",
+				"ignore": "ignore changes"
+			}
 		}
 	},
 	"format": {
@@ -253,6 +285,7 @@
 		"global": [
 			{
 				"api": "get_list",
+				"default": "''",
 				"example": "-G -c",
 				"example_text": "Here, -G -c enables the GUI and continuous mode",
 				"option": "cmdargs",
@@ -260,6 +293,7 @@
 			},
 			{
 				"api": "get_list",
+				"default": "''",
 				"example": "common.conf",
 				"force": true,
 				"location": "global",
@@ -268,18 +302,12 @@
 			},
 			{
 				"api": "get_list",
+				"default": "''",
 				"example": "common.conf",
 				"force": true,
 				"location": "global",
 				"option": "include override",
-				"user_text": "List of additional config files which provide default values. These config files are processed in addition to the files: /etc/grid-control.conf, ~/.grid-control.conf and <GCDIR>/default.conf"
-			}
-		],
-		"interactive": [
-			{
-				"api": "get_bool",
-				"option": "HALLO",
-				"user_text": "Toggle to switch the default value for interactive questions on and off"
+				"user_text": "List of additional config files which will override anything in the current config file."
 			}
 		]
 	},
@@ -295,9 +323,6 @@
 	},
 	"options": {
 		"<attr:option>": {
-			"default_map": {
-				"<name:interaction_def>": "<given by 'default' option>"
-			},
 			"option_display": "<option name>",
 			"user_text": "Toggle to switch interactive questions on and off"
 		},
@@ -530,17 +555,9 @@
 			"user_text": "Number of code context lines in shown exception logs"
 		},
 		"<name:logger_name> <name:handler_name> detail lower limit": {
-			"default_map": {
-				"<attr:DEBUG>": "DEBUG"
-			},
-			"enum_values": "LEVEL 0..50|NOTSET|DEBUG3...DEBUG|INFO3..INFO|DEFAULT|WARNING|ERROR|CRITICAL",
 			"user_text": "Logging messages below this log level will use the long form output"
 		},
 		"<name:logger_name> <name:handler_name> detail upper limit": {
-			"default_map": {
-				"<attr:ERROR>": "ERROR"
-			},
-			"enum_values": "LEVEL 0..50|NOTSET|DEBUG3...DEBUG|INFO3..INFO|DEFAULT|WARNING|ERROR|CRITICAL",
 			"user_text": "Logging messages above this log level will use the long form output"
 		},
 		"<name:logger_name> <name:handler_name> file stack": {
@@ -571,7 +588,6 @@
 			"default_map": {
 				"<attr:level>": "<depends on the logger>"
 			},
-			"enum_values": "LEVEL 0..50|NOTSET|DEBUG3...DEBUG|INFO3..INFO|DEFAULT|WARNING|ERROR|CRITICAL",
 			"user_text": "Logging level of log handlers"
 		},
 		"<name:logger_name> propagate": {
@@ -867,6 +883,7 @@
 			"user_text": "Toggle discovery only mode (without DBS consistency checks)"
 		},
 		"discovery timeout": {
+			"disable_dupe_check": true,
 			"user_text": "Specify timeout of the process that is used to discover backend featues"
 		},
 		"display logger": {
@@ -883,6 +900,9 @@
 		},
 		"email": {
 			"user_text": "Specify the email address for job notifications"
+		},
+		"enable chunk": {
+			"user_text": "Toggle chunked processing of jobs by the backend"
 		},
 		"entries command": {
 			"user_text": "Specify command that, given the file name as argument, returns with the number of entries in the file"
@@ -1459,6 +1479,9 @@
 		"submit options": {
 			"user_text": "Specify additional job submission options"
 		},
+		"submit timeout": {
+			"user_text": "Specify timeout of the process that is used to submit jobs"
+		},
 		"subst files": {
 			"user_text": "List of files that will be subjected to variable substituion"
 		},
@@ -1516,6 +1539,7 @@
 			"user_text": "Toggle the translation of the parameters WALLTIME, CPUTIME and MEMORY into job requirements"
 		},
 		"try delegate": {
+			"disable_dupe_check": true,
 			"user_text": "Toggle the attempt to do proxy delegation to the WMS"
 		},
 		"universe": {
