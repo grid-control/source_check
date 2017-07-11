@@ -21,7 +21,7 @@ def collect_and_sort_onelevel(source_iter, do_display=False):
 						cls_name = cls_parts[0]
 						cls_tree[cls_name.lower()] = cls_tree.get(cls_parts[1].lower(), [cls_parts[1]]) + [cls_name]
 				except Exception:
-					logging.warning('Error while processing %r %r', cls_tree, defclass)
+					logging.error('Error while processing %r %r', cls_tree, defclass)
 					raise
 
 			for entry in sorted(sort_helper, key=lambda k: keyfun(cls_tree, k)):
