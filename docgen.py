@@ -1,8 +1,5 @@
 import sys, json
-from python_compat import imap, lfilter, lidfilter, lmap, set
-
-
-# sys.tracebacklimit = 0
+from python_compat import identity, imap, lfilter, lidfilter, lmap, set
 
 
 def main():
@@ -426,6 +423,15 @@ def _process_cfg_call(cfg_call, available_plugins, enum_info_dict, plugin_infos)
 			cfg_call['available_multi'] = lfilter(_select_multi_cls_name, available_plugins[cfg_call['cls']])
 		cfg_call['cls_bases'] = plugin_infos.get(cfg_call['cls'], {}).get('bases', []) + [cfg_call['cls']]
 
+	if cfg_call['api'] == 'get_dict':
+		cfg_call['default_order'] = cfg_call['kwargs'].pop('default_order', None)
+		if cfg_call['default_order'] is not None:
+			cfg_call['default_order'] = lmap(eval, cfg_call['default_order'])
+		if cfg_call['default'] is not None:
+			default = eval(cfg_call['default'])  # pylint:disable=eval-used
+			default_dict = (default, cfg_call['default_order'] or list(default))
+			cfg_call['default'] = repr(_str_dict_cfg(default_dict))
+
 	cfg_call['kwargs'].pop('filter_str', None)
 	cfg_call['kwargs'].pop('filter_parser', None)
 	cfg_call['kwargs'].pop('strfun', None)
@@ -511,6 +517,15 @@ def _select_non_user_cls(cls_name):
 
 def _select_normal_cls_name(cls_name):
 	return ('Multi' not in cls_name) and not _select_non_user_cls(cls_name)
+
+
+def _str_dict_cfg(value, parser=identity, strfun=str):
+	(srcdict, srckeys) = value
+	result = ''
+	if srcdict.get(None) is not None:
+		result = strfun(srcdict[None])
+	key_value_iter = imap(lambda k: '%s => %s' % (k, strfun(srcdict[k])), srckeys)
+	return (result + str.join(' <newline> ', key_value_iter)).strip()
 
 
 def _str_time(secs):
