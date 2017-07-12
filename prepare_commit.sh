@@ -4,16 +4,24 @@ TOOLDIR="$(pwd -P)"
 BASEDIR="$TOOLDIR/../.."
 export PYTHONPATH="$BASEDIR/packages:$PYTHONPATH"
 
+echo "============================="
 echo "fixing version"
 echo "-----------------------------"
 python $TOOLDIR/update_version.py
 
+echo "============================="
 echo "fixing imports"
 echo "-----------------------------"
 
 python $TOOLDIR/imports_all.py
 python $TOOLDIR/imports_check.py
 python $TOOLDIR/imports_sort.py
+
+echo "============================="
+echo "checking names"
+echo "-----------------------------"
+
+python $TOOLDIR/check_fun_name.py
 
 echo "============================="
 echo "fixing compat imports"
