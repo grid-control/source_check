@@ -1,3 +1,17 @@
+# | Copyright 2017 Karlsruhe Institute of Technology
+# |
+# | Licensed under the Apache License, Version 2.0 (the "License");
+# | you may not use this file except in compliance with the License.
+# | You may obtain a copy of the License at
+# |
+# |     http://www.apache.org/licenses/LICENSE-2.0
+# |
+# | Unless required by applicable law or agreed to in writing, software
+# | distributed under the License is distributed on an "AS IS" BASIS,
+# | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# | See the License for the specific language governing permissions and
+# | limitations under the License.
+
 import sys, json
 from python_compat import identity, imap, lfilter, lidfilter, lmap, set
 
@@ -68,6 +82,10 @@ def _apply_user_to_cc(cfg_call, user_dict, user_key_used, used_remap, available_
 		imap(lambda value: opl_fmt % value, sorted(available_plugins['ListFilter'])))
 	cfg_call['available_matcher_list'] = str.join('',
 		imap(lambda value: opl_fmt % value, sorted(available_plugins['Matcher'])))
+	cfg_call['available_parameter_parser'] = str.join('',
+		imap(lambda value: opl_fmt % value, sorted(available_plugins['ParameterParser'])))
+	cfg_call['available_parameter_tuple_parser'] = str.join('',
+		imap(lambda value: opl_fmt % value, sorted(available_plugins['ParameterTupleParser'])))
 	if cfg_call.get('available'):
 		cfg_call['available_list'] = str.join('',
 			imap(lambda value: opl_fmt % value, sorted(cfg_call['available'])))
@@ -115,7 +133,7 @@ def _apply_user_to_cc_list(opt_to_cc_list, user_dict, user_key_used, used_remap,
 
 def _display_location(location_list, cc_by_location, user_dict, enum_info_dict):
 	if '.' in location_list[0]:
-		_output(repr(cc_by_location.get(location_list[0])))
+		_output(json.dumps(cc_by_location.get(location_list[0]), indent=2))
 		raise Exception('Invalid location %r' % location_list[0])
 	_output('.. _%s:' % location_list[0])
 	_output('%s options' % location_list[0])
@@ -322,16 +340,19 @@ def _get_opt_to_cc_list(config_call_list, available_plugins, enum_info_dict, plu
 	for cfg_call in config_call_list:
 		try:
 			cfg_fqfn = cfg_call['fqfn']
-			if cfg_fqfn.startswith('pconfig') or cfg_fqfn.startswith('self._parameter_config'):
-				continue
-			_process_cfg_call(cfg_call, available_plugins, enum_info_dict, plugin_infos)
+			if cfg_call['callers'][-1] in ['__init__', '__new__']:
+				cfg_call['callers'].pop()
+			cfg_call['location'] = str.join('.', cfg_call['callers'])
+			cfg_call['bases'] = plugin_infos.get(cfg_call['callers'][0], {}).get('bases', [])
+			if cfg_fqfn.startswith('pconfig'):
+				_process_pcfg_call(cfg_call, available_plugins, enum_info_dict, plugin_infos)
+			else:
+				_process_cfg_call(cfg_call, available_plugins, enum_info_dict, plugin_infos)
 
 			# Catch unknown (kw)args
 			if cfg_call['args']:
-				_output(json.dumps(cfg_call, indent=2))
 				raise Exception('Unknown args!')
 			if cfg_call['kwargs']:
-				_output(json.dumps(cfg_call, indent=2))
 				raise Exception('Unknown kwargs!')
 
 			opt_to_cc_list.setdefault(cfg_call['option'], []).append(cfg_call)
@@ -440,11 +461,6 @@ def _process_cfg_call(cfg_call, available_plugins, enum_info_dict, plugin_infos)
 	cfg_call['kwargs'].pop('parse_item', None)
 	cfg_call['kwargs'].pop('interactive_msg', None)
 
-	if cfg_call['callers'][-1] == '__init__':
-		cfg_call['callers'].pop()
-	cfg_call['location'] = str.join('.', cfg_call['callers'])
-	cfg_call['bases'] = plugin_infos.get(cfg_call['callers'][0], {}).get('bases', [])
-
 
 def _process_get_composited_plugin(cfg_call):
 	_process_get_plugin(cfg_call)
@@ -499,6 +515,28 @@ def _process_get_time(cfg_call):
 		default_time = cfg_call['default']
 		if default_time > 0:
 			cfg_call['default'] = _str_time(default_time)
+
+
+def _process_pcfg_call(cfg_call, available_plugins, enum_info_dict, plugin_infos):
+	if cfg_call['api'] in ['get', 'get_bool', 'get_parameter']:
+		vn = cfg_call['args'].pop(0).strip("'")
+		opt = None
+		default = None
+		cfg_call['option'] = vn
+		if cfg_call['args']:
+			opt = cfg_call['args'].pop(0)
+			if opt:
+				opt = opt.strip("'")
+				cfg_call['option'] = ('%s %s' % (vn, opt)).strip()
+		if cfg_call['args']:
+			default = cfg_call['args'].pop(0)
+		elif 'default' in cfg_call['kwargs']:
+			default = cfg_call['kwargs'].pop('default')
+		cfg_call['default'] = default
+		cfg_call['options'] = [cfg_call['option']]
+		cfg_call['location'] = cfg_call['location'].replace('.create_psrc', '')
+		cfg_call['location'] = cfg_call['location'].replace('.parse_tuples', '')
+		cfg_call['location'] = cfg_call['location'].replace('.parse_value', '')
 
 
 def _rewrite_user_dict(user_dict):

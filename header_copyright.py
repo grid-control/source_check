@@ -1,9 +1,4 @@
-import sys, logging, subprocess
-from python_compat import imap
-
-
-HEADER_TEMPLATE = """
-# | Copyright %s Karlsruhe Institute of Technology
+# | Copyright 2017 Karlsruhe Institute of Technology
 # |
 # | Licensed under the Apache License, Version 2.0 (the "License");
 # | you may not use this file except in compliance with the License.
@@ -17,7 +12,26 @@ HEADER_TEMPLATE = """
 # | See the License for the specific language governing permissions and
 # | limitations under the License.
 
-""".lstrip()
+import os, sys, logging, subprocess
+from python_compat import imap
+
+
+HEADER_TEMPLATE = """
+~ | Copyright %s Karlsruhe Institute of Technology
+~ |
+~ | Licensed under the Apache License, Version 2.0 (the "License");
+~ | you may not use this file except in compliance with the License.
+~ | You may obtain a copy of the License at
+~ |
+~ |     http://www.apache.org/licenses/LICENSE-2.0
+~ |
+~ | Unless required by applicable law or agreed to in writing, software
+~ | distributed under the License is distributed on an "AS IS" BASIS,
+~ | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ | See the License for the specific language governing permissions and
+~ | limitations under the License.
+
+""".lstrip().replace('~', '#')
 
 
 def main():
@@ -34,15 +48,26 @@ def main():
 
 
 def _update_header(fn):
-	licence_update_revs = [
-		'421bfb25b9ba81c68225f77bc5142a9c9b68e183',
-		'a5cbd19838ca2fe1f30857c19882e008214c11eb',
-	]
-	gitlog = subprocess.check_output('git log --follow --format="format:%ai %an <%ae> %H" ' + fn +
-		str.join('', imap(lambda x: ' | grep -v ' + x, licence_update_revs)), shell=True)
+	old_dir = os.getcwd()
+	os.chdir(os.path.dirname(fn))
+	cmd = 'git log --follow --format="format:%ai %an <%ae> %H" ' + os.path.basename(fn)
+	gitlog = subprocess.check_output(cmd, shell=True)
+	os.chdir(old_dir)
+
+	def _skip_licence_updates(lines):
+		licence_update_revs = [
+			'421bfb25b9ba81c68225f77bc5142a9c9b68e183',
+			'a5cbd19838ca2fe1f30857c19882e008214c11eb',
+		]
+		for line in lines:
+			if any(imap(lambda rev: rev in line, licence_update_revs)):
+				continue
+			yield line
+
+	log_lines = list(_skip_licence_updates(gitlog.splitlines()))
 	try:
-		year_a = gitlog.splitlines()[-1].split('-')[0]
-		year_b = gitlog.splitlines()[0].split('-')[0]
+		year_a = log_lines[-1].split('-')[0]
+		year_b = log_lines[0].split('-')[0]
 		if year_a == year_b:
 			year = year_a
 		else:
@@ -51,6 +76,7 @@ def _update_header(fn):
 	except:
 		logging.warning('no version: %s', fn)
 		raise
+
 	do_insert = True
 	data = open(fn).readlines()
 	fp = open(fn, 'w')
@@ -73,3 +99,7 @@ def _update_header(fn):
 	if data != open(fn).readlines():
 		logging.warning('changed %s', fn)
 	return tab_count
+
+
+if __name__ == '__main__':
+	main()

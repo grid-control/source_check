@@ -1,3 +1,17 @@
+# | Copyright 2017 Karlsruhe Institute of Technology
+# |
+# | Licensed under the Apache License, Version 2.0 (the "License");
+# | you may not use this file except in compliance with the License.
+# | You may obtain a copy of the License at
+# |
+# |     http://www.apache.org/licenses/LICENSE-2.0
+# |
+# | Unless required by applicable law or agreed to in writing, software
+# | distributed under the License is distributed on an "AS IS" BASIS,
+# | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# | See the License for the specific language governing permissions and
+# | limitations under the License.
+
 import os, math, logging, get_file_list
 from python_compat import imap, sorted
 
@@ -5,7 +19,7 @@ from python_compat import imap, sorted
 def main():
 	(changes_a_dict, email_dict) = parse_info()
 
-	def sort_by(author):
+	def _sort_by(author):
 		# sort_by_added
 		# return (-changes_a_dict[author][0], author.split()[-1])
 		# sort_by_removed
@@ -22,7 +36,7 @@ def main():
 		if not line.startswith(' ' * 15):
 			fp_w.write(line)
 		elif not wrote_hiscore:
-			for hs_line in write_hiscore(fp_w, changes_a_dict, email_dict, sort_by):
+			for hs_line in write_hiscore(fp_w, changes_a_dict, email_dict, _sort_by):
 				if 'Fred Stober' not in hs_line:
 					fp_w.write(hs_line.encode('utf-8'))
 			wrote_hiscore = True

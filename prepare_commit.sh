@@ -5,30 +5,41 @@ BASEDIR="$TOOLDIR/../.."
 export PYTHONPATH="$BASEDIR/packages:$PYTHONPATH"
 
 echo "============================="
+echo "self check"
+echo "-----------------------------"
+TOOLS="$(ls *.py | grep -v create_graph.py)"
+python "$TOOLDIR/imports_all.py" $TOOLS
+python "$TOOLDIR/imports_check.py" $TOOLS
+python "$TOOLDIR/imports_sort.py" $TOOLS
+python "$TOOLDIR/check_fun_name.py" $TOOLS
+python "$TOOLDIR/devtool_sort_code.py" $TOOLS 2>&1 | grep -v WARNING
+python "$TOOLDIR/header_copyright.py" $TOOLS 2>&1 | grep changed
+
+echo "============================="
 echo "fixing version"
 echo "-----------------------------"
-python $TOOLDIR/update_version.py
+python "$TOOLDIR/update_version.py"
 
 echo "============================="
 echo "fixing imports"
 echo "-----------------------------"
 
-python $TOOLDIR/imports_all.py
-python $TOOLDIR/imports_check.py
-python $TOOLDIR/imports_sort.py
+python "$TOOLDIR/imports_all.py"
+python "$TOOLDIR/imports_check.py"
+python "$TOOLDIR/imports_sort.py"
 
 echo "============================="
 echo "checking names"
 echo "-----------------------------"
 
-python $TOOLDIR/check_fun_name.py
+python "$TOOLDIR/check_fun_name.py"
 
 echo "============================="
 echo "fixing compat imports"
 echo "-----------------------------"
 
 cd "$BASEDIR"
-python packages/python_compat.py 2>&1 | grep -v requests | grep -v xmpp
+python "packages/python_compat.py" 2>&1 | grep -v requests | grep -v xmpp
 cd - > /dev/null
 
 echo "============================="
@@ -36,7 +47,7 @@ echo "updating plugins"
 echo "-----------------------------"
 
 cd "$BASEDIR/packages"
-python grid_control_update.py
+python "grid_control_update.py"
 cd - > /dev/null
 
 echo "============================="
@@ -55,7 +66,6 @@ ALL_FILES="\
 	packages/grid_control_cms/*.py \
 	packages/grid_control_gui/*.py \
 	packages/grid_control_usb/*.py \
-	packages/grid_control_tests/*.py \
 	packages/hpfwk/*.py \
 	scripts/*.py
 	setup.py
@@ -81,6 +91,6 @@ echo "============================="
 echo "updating documentation"
 echo "-----------------------------"
 
-python docgen_parse_code.py
-python docgen_plugin_infos.py | sort | uniq > /dev/null
-python docgen.py stop > "$BASEDIR/docs/config.rst"
+python "docgen_parse_code.py"
+python "docgen_plugin_infos.py" | sort | uniq > /dev/null
+python "docgen.py" stop > "$BASEDIR/docs/config.rst"

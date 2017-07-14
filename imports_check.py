@@ -1,3 +1,17 @@
+# | Copyright 2017 Karlsruhe Institute of Technology
+# |
+# | Licensed under the Apache License, Version 2.0 (the "License");
+# | you may not use this file except in compliance with the License.
+# | You may obtain a copy of the License at
+# |
+# |     http://www.apache.org/licenses/LICENSE-2.0
+# |
+# | Unless required by applicable law or agreed to in writing, software
+# | distributed under the License is distributed on an "AS IS" BASIS,
+# | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# | See the License for the specific language governing permissions and
+# | limitations under the License.
+
 import logging, get_file_list
 from python_compat import any, ifilter, imap, set
 
@@ -18,7 +32,7 @@ def _check_imported_use(fn, list_from, code_str):
 	# remove import lines for usage check
 	def _is_import_or_comment(line):
 		line = line.lstrip()
-		return line.startswith('#') or line.startswith('from ') or line.startswith('import')
+		return line.startswith('#') or line.startswith('from ') or line.startswith('import ')
 
 	code_str = str.join('\n', ifilter(
 		lambda line: not _is_import_or_comment(line), code_str.splitlines()))
@@ -27,11 +41,11 @@ def _check_imported_use(fn, list_from, code_str):
 		if ' as ' in imported:
 			imported = imported.split(' as ')[1]
 
-		def chk(fmt):
+		def _chk(fmt):
 			code_piece = fmt % imported
 			return code_piece in code_str
 
-		if any(imap(chk, ['%s(', '%s.', 'raise %s', '(%s)', '=%s', ' = %s', ' != %s', 'return %s',
+		if any(imap(_chk, ['%s(', '%s.', 'raise %s', '(%s)', '=%s', ' = %s', ' != %s', 'return %s',
 			', %s)', '(%s, ', 'except %s', ' %s,', '\t%s,', '%s, [', '%s]', 'or %s', '%s not in'])):
 			continue
 		if imported in ['backends', 'datasets']:
@@ -81,7 +95,7 @@ def _get_imported(fn, code_str):
 	list_from = []
 	list_source = []
 	for import_line in ifilter(lambda line: line.lstrip().startswith('from '), code_str.splitlines()):
-		if 'import' not in import_line:
+		if 'import ' not in import_line:
 			continue
 		if '*' in import_line:
 			logging.warning('%s wildcard import!', fn)
@@ -89,16 +103,16 @@ def _get_imported(fn, code_str):
 			if (len(import_line.split('#')[0].strip()) <= 100) and ('#' in import_line):
 				logging.warning('%s invalid marker!', fn)
 			import_line = import_line.split('#')[0].strip()
-			list_from.extend(imap(str.strip, import_line.split('import')[1].split(',')))
-			list_source.append(import_line.split('import')[0].strip().split()[1])
+			list_from.extend(imap(str.strip, import_line.split('import ')[1].split(',')))
+			list_source.append(import_line.split('import ')[0].strip().split()[1])
 	return (list_from, list_source)
 
 
 def _get_imported_libs(code_str):
 	list_imported = []
-	for import_line in ifilter(lambda line: line.lstrip().startswith('import'), code_str.splitlines()):
+	for import_line in ifilter(lambda line: line.lstrip().startswith('import '), code_str.splitlines()):
 		import_line = import_line.split('#')[0].strip()
-		list_imported.extend(imap(str.strip, import_line.replace('import', '').split(',')))
+		list_imported.extend(imap(str.strip, import_line.replace('import ', '').split(',')))
 	return list_imported
 
 

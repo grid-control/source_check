@@ -1,3 +1,17 @@
+# | Copyright 2017 Karlsruhe Institute of Technology
+# |
+# | Licensed under the Apache License, Version 2.0 (the "License");
+# | you may not use this file except in compliance with the License.
+# | You may obtain a copy of the License at
+# |
+# |     http://www.apache.org/licenses/LICENSE-2.0
+# |
+# | Unless required by applicable law or agreed to in writing, software
+# | distributed under the License is distributed on an "AS IS" BASIS,
+# | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# | See the License for the specific language governing permissions and
+# | limitations under the License.
+
 import ast, json, logging, linecache, get_file_list
 from python_compat import imap, lchain, lmap
 
@@ -143,17 +157,20 @@ def _parse_option_name(value):
 
 
 def _parse_option_op(value):
+	value_left = _parse_option_spec(value.left)
+	value_right = _parse_option_spec(value.right)
 	if isinstance(value.op, ast.Add):
 		return '%s %s' % (
-			_parse_option_spec(value.left).strip().rstrip("'").strip(),
-			_parse_option_spec(value.right).strip().lstrip("'").strip())
+			value_left.strip().rstrip("'").strip(),
+			value_right.strip().lstrip("'").strip())
 	elif isinstance(value.op, ast.Mod):
+		value_left = value_left.replace('%d', '%s')
 		try:
-			return _parse_option_spec(value.left) % _parse_option_spec(value.right)
+			return value_left % value_right
 		except Exception:
-			return _parse_option_spec(value.left) + '%' + _parse_option_spec(value.right)
+			return value_left + '%' + value_right
 	elif isinstance(value.op, ast.Mult):
-		return eval('%s * %s' % (_parse_option_spec(value.left), _parse_option_spec(value.right)))  # pylint:disable=eval-used
+		return eval('%s * %s' % (value_left, value_right))  # pylint:disable=eval-used
 
 
 def _parse_option_spec(value):
@@ -184,19 +201,12 @@ def _process_calls_in_file(fn, enums, enums_use_hash, config_calls):
 	for (caller_stack, node, parents) in call_infos:
 		result = _transform_call(fn, caller_stack, node)
 
+		is_pconfig_get = ('self.get' in result['fqfn']) and (result['fn'].endswith('pconfig.py'))
+
 		if 'make_enum' in result['fqfn']:
 			if 'make_enum.enum_list' in result['fqfn']:
 				continue
-			if len(node.args) == 1:
-				enum_name = parents[-1].targets[0].id
-			elif len(node.args) == 2:
-				enum_name = node.args[1].id
-			kw_iter = imap(lambda kw: (kw.arg, kw.value.id), result['node'].keywords)
-			enums_use_hash[enum_name] = ('use_hash', 'False') not in kw_iter
-			try:
-				enums.append((enum_name, lmap(lambda x: x.s, node.args[0].elts)))
-			except Exception:
-				enums.append((enum_name, '<manual>'))
+			_process_enum(node, parents, result, enums, enums_use_hash)
 			continue
 
 		elif '_query_config' in result['fqfn']:
@@ -207,14 +217,29 @@ def _process_calls_in_file(fn, enums, enums_use_hash, config_calls):
 		elif 'config.is_interactive' in result['fqfn']:
 			config_calls.append(result)
 
-		elif 'config.get' in result['fqfn']:
+		elif is_pconfig_get or ('config.get' in result['fqfn']):
+			if is_pconfig_get:
+				result['fqfn'] = result['fqfn'].replace('self.get', 'pconfig.get')
 			assert result['node'].func.attr.startswith('get')  # prevent sequential calls with get
 			use = True
-			for key in ['get_config_name', 'get_work_path', 'get_state', 'get_option_list']:  # internal API
+			for key in ['get_config', 'get_work_path', 'get_state', 'get_option_list']:  # internal API
 				if key in result['fqfn']:
 					use = False
 			if use:
 				config_calls.append(result)
+
+
+def _process_enum(node, parents, result, enums, enums_use_hash):
+	if len(node.args) == 1:
+		enum_name = parents[-1].targets[0].id
+	elif len(node.args) == 2:
+		enum_name = node.args[1].id
+	kw_iter = imap(lambda kw: (kw.arg, kw.value.id), result['node'].keywords)
+	enums_use_hash[enum_name] = ('use_hash', 'False') not in kw_iter
+	try:
+		enums.append((enum_name, lmap(lambda x: x.s, node.args[0].elts)))
+	except Exception:
+		enums.append((enum_name, '<manual>'))
 
 
 def _transform_call(fn, caller_stack, node):
