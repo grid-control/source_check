@@ -5,7 +5,7 @@
 			"api_text": "Allows to specify multiple plugins that are composited ",
 			"append_options": [
 				{
-					"desc_line": "Specifiy compositor class to merge the different broker plugins given in ``%(option_display)s``\n\nList of available broker compositor plugins:\n%(available_multi_list)s",
+					"desc_line": "Specify compositor class to merge the different broker plugins given in ``%(option_display)s``\n\nList of available broker compositor plugins:\n%(available_multi_list)s",
 					"opt_line": "``%(option_display)s manager`` = <plugin> (Default: %(compositor)s)"
 				}
 			],
@@ -38,7 +38,7 @@
 			"api_text": "Allows to specify a command for later execution",
 			"append_options": [
 				{
-					"desc_line": "Specifiy the type of command",
+					"desc_line": "Specify the type of command",
 					"opt_line": "``%(option_display)s type`` = <enum: <enum_values:CommandType>> (Default: 'executable')"
 				}
 			],
@@ -49,7 +49,7 @@
 			"api_text": "Allows to specify multiple plugins that are composited",
 			"append_options": [
 				{
-					"desc_line": "Specifiy compositor class to merge the different plugins given in ``%(option_display)s``\n\nList of available compositor plugins:\n%(available_multi_list)s",
+					"desc_line": "Specify compositor class to merge the different plugins given in ``%(option_display)s``\n\nList of available compositor plugins:\n%(available_multi_list)s",
 					"opt_line": "``%(option_display)s manager`` = <plugin> (Default: %(compositor)s)"
 				}
 			],
@@ -82,15 +82,15 @@
 			"api_text": "Allows to specify a filter expression. The details of the filter setup is provided by the option '<opt> matcher'",
 			"append_options": [
 				{
-					"desc_line": "Specifiy plugin that is used to filter the list\n\nList of available filters:\n%(available_filter_list)s",
+					"desc_line": "Specify plugin that is used to filter the list\n\nList of available filters:\n%(available_filter_list)s",
 					"opt_line": "``%(option_display)s plugin`` = <plugin> (Default: %(default_filter)s)"
 				},
 				{
-					"desc_line": "Specifiy matcher plugin that is used to match filter expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s",
+					"desc_line": "Specify matcher plugin that is used to match filter expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s",
 					"opt_line": "``%(option_display)s matcher`` = <plugin> (Default: %(default_matcher)s)"
 				},
 				{
-					"desc_line": "Specifiy the order of the filtered list",
+					"desc_line": "Specify the order of the filtered list",
 					"opt_line": "``%(option_display)s order`` = <enum: <enum_values:ListOrder>> (Default: <enum:ListOrder:%(default_order)s>)"
 				}
 			],
@@ -126,7 +126,7 @@
 			"api_text": "Allows to define values that depend on other parameters",
 			"append_options": [
 				{
-					"desc_line": "Specifiy matcher plugin that is used to match the lookup expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s",
+					"desc_line": "Specify matcher plugin that is used to match the lookup expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s",
 					"opt_line": "``%(option_display)s matcher`` = <plugin> (Default: %(default_matcher)s)"
 				}
 			],
@@ -138,11 +138,16 @@
 			"api_text": "Allows to specify a matcher expression. The details of the matcher setup is provided by the option '<opt> matcher'",
 			"append_options": [
 				{
-					"desc_line": "Specifiy matcher plugin that is used to match filter expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s",
+					"desc_line": "Specify matcher plugin that is used to match filter expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s",
 					"opt_line": "``%(option_display)s matcher`` = <plugin> (Default: %(default_matcher)s)"
 				}
 			],
 			"short": "<filter option>"
+		},
+		"get_parameter": {
+			"after_user": "",
+			"api_text": "Parameter value",
+			"short": "<text>"
 		},
 		"get_path": {
 			"after_user": "",
@@ -232,7 +237,6 @@
 		"SCRAMTask",
 		"TaskModule",
 		"TimedAccessToken",
-		"TestsuiteWMS",
 		"WMS"
 	],
 	"location_force": [
@@ -251,15 +255,17 @@
 		"ConfigDataProvider._read_fi": "ConfigDataProvider",
 		"ConfigFactory": "global",
 		"DataParameterSource": "dataset",
-		"DataParameterSource.__new__": "dataset",
 		"DataProvider": "dataset",
 		"DataTask._setup_repository": "DataTask",
 		"DefaultPartitionResyncHandler": "dataset",
 		"DiscoverGliteEndpointsLazy": "GliteWMS",
 		"GridEngineCheckJobsProcessCreator": "GridEngine",
 		"HTCondor._initPoolInterfaces": "HTCondor",
-		"Local.__new__": "Local",
 		"NoVarCheck": "global",
+		"ParameterConfig._handle_dict": "parameters",
+		"ParameterConfig._parse_dict": "parameters",
+		"ParameterConfig._process_parameter_list": "parameters",
+		"ParameterConfig.get_parameter": "parameters",
 		"SandboxHelper": "Local",
 		"ScanProviderBase.__init__._get_active_hash_input": "ScanProviderBase",
 		"ScanProviderBase.__init__._setup": "ScanProviderBase",
@@ -312,19 +318,31 @@
 		]
 	},
 	"option_map": {
+		"<call:output_vn.lstrip('!')>": "<parameter>",
+		"<call:self._get_varexpr(<name:vn>)>": "<parameter expression>",
+		"<call:self._get_varexpr(<parameter>)>": "<parameter expression>",
 		"<name:broker_prefix>": "<broker prefix>",
 		"<name:datasource_name>": "<datasource>",
 		"<name:handler_name>": "<handler>",
+		"<name:idx>": "<index>",
 		"<name:logger_name>": "<logger name>",
 		"<name:option_prefix>": "<prefix>",
+		"<name:output_vn>": "<parameter>",
 		"<name:prefix>": "<prefix>",
+		"<name:ref_name>": "<parameter reference>",
 		"<name:storage_channel>": "<storage channel>",
-		"<name:storage_type>": "<storage type>"
+		"<name:storage_type>": "<storage type>",
+		"<name:varexpr>": "<parameter expression>",
+		"<name:vn>": "<parameter>"
 	},
 	"options": {
 		"<attr:option>": {
 			"option_display": "<option name>",
 			"user_text": "Toggle to switch interactive questions on and off"
+		},
+		"<call:output_vn.lstrip('!')>": {
+			"disable_dupe_check": true,
+			"user_text": "Specify parameter value"
 		},
 		"<call:self._get_var_opt(<name:varexpr>, <name:suffix>)>": {
 			"default_map": {
@@ -333,6 +351,16 @@
 			"disable_dupe_check": true,
 			"option_display": "<name of variable> or <tuple with variable> [<option name for variable>]",
 			"user_text": "Specify value(s) of variable"
+		},
+		"<call:self._get_varexpr(<name:vn>)> key delimeter": {
+			"user_text": "Specify delimeter to split parameter names"
+		},
+		"<call:self._get_varexpr(<name:vn>)> parse dict": {
+			"user_text": "Toggle parsing parameter value as dictionary when it contains '=>'"
+		},
+		"<name:broker_prefix>": {
+			"disable_dupe_check": true,
+			"user_text": "Specify broker requirement"
 		},
 		"<name:broker_prefix> broker prune": {
 			"user_text": "Toggle the removal of unused brokers from the broker pipeline"
@@ -614,6 +642,24 @@
 		"<name:option_prefix> mode": {
 			"user_text": "Specify the matcher plugin that is used to match the subexpressions of the filter"
 		},
+		"<name:output_vn> empty set": {
+			"user_text": "Toggle if empty lookup results should be interpreted as an empty set [] or alternatively as an empty string ''"
+		},
+		"<name:output_vn> lookup": {
+			"user_text": "Specify name of the lookup variable"
+		},
+		"<name:output_vn> matcher": {
+			"default_map": {
+				"<name:name_matcher_default>": "<default matcher given by 'default matcher'>"
+			},
+			"user_text": "Specify matcher plugin that is used to match the lookup expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s"
+		},
+		"<name:output_vn>:ConstParameterSource": {
+			"user_text": "Specify the parameter with the constant value"
+		},
+		"<name:output_vn>:_get_lookup_args": {
+			"user_text": "Specify the output variable name where the lookup result is stored"
+		},
 		"<name:prefix> arguments": {
 			"option_display": "[<prefix>] arguments",
 			"user_text": "Specify arguments for the executable"
@@ -645,6 +691,18 @@
 			"option_display": "[<prefix>] send executable",
 			"user_text": "Toggle to control if the specified executable should be send together with the job"
 		},
+		"<name:ref_name> format": {
+			"user_text": "Specify format of referenced CSV file"
+		},
+		"<name:ref_name> source": {
+			"user_text": "Specify filename of referenced CSV file"
+		},
+		"<name:ref_name> type": {
+			"default_map": {
+				"<name:ref_type_default>": "<'data' when datasource is defined, 'csv' otherwise>"
+			},
+			"user_text": "Specify reference type"
+		},
 		"<name:storage_channel> files": {
 			"user_text": "Specify the files that are transferred over this storage channel"
 		},
@@ -675,10 +733,53 @@
 		"<name:storage_channel> timeout": {
 			"user_text": "Specify the transfer timeout for files over this storage channel"
 		},
+		"<name:storage_type> path": {
+			"user_text": "Specify the default transport URL(s) that are used to transfer files over this type of storage channel"
+		},
 		"<name:url>": {
 			"option_display": "<dataset URL>",
 			"short": "<int> [<metadata in JSON format>]",
 			"user_text": "The option name corresponds to the URL of the dataset file. The value consists of the number of entry and some optional file metadata"
+		},
+		"<name:varexpr>": {
+			"user_text": "Specify parameter value"
+		},
+		"<name:varexpr> default": {
+			"disable_dupe_check": true,
+			"user_text": "Specify default value for the output variable"
+		},
+		"<name:varexpr> delimeter:DefaultTupleParser": {
+			"user_text": "Specify delimeter to split tuples"
+		},
+		"<name:varexpr> delimeter:SplitParameterParser": {
+			"user_text": "Specify delimeter to split parameter value"
+		},
+		"<name:varexpr> source": {
+			"disable_dupe_check": true,
+			"user_text": "Specify name of input variable"
+		},
+		"<name:varexpr> type": {
+			"user_text": "Specify parameter tuple parser\n\nList of available parameter tuple parser plugins:\n%(available_parameter_tuple_parser)s"
+		},
+		"<name:varexpr> version": {
+			"default_map": {
+				"<call:self._get_version(<name:value>)>": "<version of repository given by parameter>"
+			},
+			"disable_dupe_check": true,
+			"user_text": "Override the result returned by the version control system"
+		},
+		"<name:vn>": {
+			"user_text": "Specify parameter value"
+		},
+		"<name:vn> repeat": {
+			"user_text": "Specify how often the parameter values should be repeated"
+		},
+		"<name:vn> repeat idx <name:idx>": {
+			"user_text": "Specify how often the given parameter value should be repeated"
+		},
+		"<name:vn> type": {
+			"disable_dupe_check": true,
+			"user_text": "Specify parameter value parser\n\nList of available parameter value parser plugins:\n%(available_parameter_parser)s"
 		},
 		"abort report": {
 			"user_text": "Specify report plugin to display in case of job cancellations"
@@ -722,6 +823,9 @@
 		},
 		"activity stream stdout": {
 			"user_text": "Specify activity stream class that displays the current activity tree on stdout"
+		},
+		"allow phedex": {
+			"user_text": "Allow phedex queries to retrieve dataset location information"
 		},
 		"append info": {
 			"user_text": "List of classAds to manually add to the job submission file"
@@ -837,6 +941,12 @@
 		},
 		"debug mode": {
 			"user_text": "Toggle debug mode (detailed exception output on stdout)"
+		},
+		"default lookup": {
+			"user_text": "Specify the default lookup variable"
+		},
+		"default matcher": {
+			"user_text": "Specify the default matcher plugin that is used to match the lookup expressions\n\nList of available matcher plugins:\n%(available_matcher_list)s"
 		},
 		"defect tries": {
 			"example": 4,
@@ -984,7 +1094,7 @@
 			"default_map": {
 				"<name:ignore_list_default>": "<list of common task vars>"
 			},
-			"user_text": "Specifiy the list of task variables that is not included in the dataset metadata"
+			"user_text": "Specify the list of task variables that is not included in the dataset metadata"
 		},
 		"ignore warnings": {
 			"user_text": "Toggle check for non-zero exit code from voms-proxy-info"
@@ -1063,7 +1173,7 @@
 			"user_text": "Maximum amount of disk space (in MB) that the job is allowed to use in the landing zone directory while running"
 		},
 		"lfn marker": {
-			"user_text": "Specifiy the string that marks the beginning of the LFN"
+			"user_text": "Specify the string that marks the beginning of the LFN"
 		},
 		"local event handler": {
 			"user_text": "Specify local event handler plugins to track the task / job progress on the submission host"
@@ -1091,6 +1201,12 @@
 			"user_text": "Number of resubmission attempts for failed jobs"
 		},
 		"memory:LocalMemoryBroker": {
+			"default_map": {
+				"-1": "unspecified (%(default_raw)s)"
+			},
+			"user_text": "Requested memory in MB by the batch system"
+		},
+		"memory:LocalWMS": {
 			"default_map": {
 				"-1": "unspecified (%(default_raw)s)"
 			},
@@ -1395,6 +1511,9 @@
 		"se list": {
 			"user_text": "Specify list of locations where the dataset is available"
 		},
+		"se min size": {
+			"user_text": "TODO: DELETE"
+		},
 		"se output manager": {
 			"user_text": "Specify transfer manager plugin to transfer SE output files"
 		},
@@ -1498,7 +1617,7 @@
 		},
 		"task id:Condor": {
 			"default_map": {
-				"<call:md5(...).hexdigest()>": "<md5 hash>"
+				"<call:md5_hex(<call:str(<call:time.time()>)>)>": "<md5 hash>"
 			},
 			"user_text": "Persistent condor task identifier that is generated at the start of the task"
 		},
@@ -1604,6 +1723,9 @@
 		},
 		"wms discover full": {
 			"user_text": "Toggle between full and lazy WMS endpoint discovery"
+		},
+		"wms search list": {
+			"user_text": "Specify order of commands to check for available backends"
 		},
 		"workdir": {
 			"default_map": {
