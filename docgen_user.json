@@ -1087,6 +1087,9 @@
 		"gzip output": {
 			"user_text": "Toggle the compression of the job log files for stdout and stderr"
 		},
+		"hide login": {
+			"user_text": "Toggle displaying the login URL / account information at startup"
+		},
 		"ignore needed time": {
 			"user_text": "Toggle if the needed time influences the decision if the proxy allows job submission"
 		},
@@ -1321,6 +1324,10 @@
 		"parent source": {
 			"user_text": "Specify the dataset specifier from which the parent information is taken"
 		},
+		"password": {
+			"default": "<random string>",
+			"user_text": "Specify the password protecting the web user interface"
+		},
 		"phedex sites": {
 			"user_text": "Toggle the inclusion of files marked as invalid dataset"
 		},
@@ -1341,6 +1348,9 @@
 		},
 		"poolconfig": {
 			"user_text": "Specify the list of pool config files"
+		},
+		"port": {
+			"user_text": "Specify the port used by the web user interface"
 		},
 		"prefix": {
 			"user_text": "Specify the common prefix of URLs in the dataset"
@@ -1679,6 +1689,12 @@
 				"<call:get_local_username()>": "<local user name>"
 			},
 			"user_text": "Specify batch system user name"
+		},
+		"username": {
+			"default_map": {
+				"<call:get_local_username()>": "<local user name>"
+			},
+			"user_text": "Specify the username protecting the web user interface"
 		},
 		"variable markers": {
 			"allowed": "@ and/or __",
