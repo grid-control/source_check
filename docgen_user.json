@@ -849,6 +849,13 @@
 		"backend": {
 			"user_text": "Select the backend to use for job submission"
 		},
+		"cancel": {
+			"short": "<job selector>",
+			"user_text": "The unfinished jobs selected by this expression are cancelled"
+		},
+		"cancel jobs": {
+			"user_text": "Toggle interactivity of job deletion requests"
+		},
 		"cancel timeout": {
 			"user_text": "Specify timeout of the process that is used to cancel jobs"
 		},
@@ -954,13 +961,6 @@
 		},
 		"delay output": {
 			"user_text": "Toggle between direct output of stdout/stderr to the sandbox or indirect output to local tmp during job execution"
-		},
-		"delete": {
-			"short": "<job selector>",
-			"user_text": "The unfinished jobs selected by this expression are cancelled"
-		},
-		"delete jobs": {
-			"user_text": "Toggle interactivity of job deletion requests"
 		},
 		"delimeter block key": {
 			"short": "<delimeter>:<start>:<end>",
@@ -1088,7 +1088,7 @@
 			"user_text": "Toggle the compression of the job log files for stdout and stderr"
 		},
 		"hide login": {
-			"user_text": "Toggle displaying the login URL / account information at startup"
+			"user_text": "Toggle displaying the login account information at startup"
 		},
 		"ignore needed time": {
 			"user_text": "Toggle if the needed time influences the decision if the proxy allows job submission"
