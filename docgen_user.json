@@ -1415,6 +1415,9 @@
 			},
 			"user_text": "Specify the maximum amount of categories that should be displayed"
 		},
+		"report file directory": {
+			"user_text": "Directory to store the status json files in."
+		},
 		"report hierarchy": {
 			"user_text": "Specify the hierarchy of backend variables in the report table"
 		},
