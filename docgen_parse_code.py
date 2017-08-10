@@ -191,6 +191,10 @@ def _parse_option_spec(value):
 		result = _parse_option_call(value)
 	elif isinstance(value, ast.BinOp):
 		result = _parse_option_op(value) or '<manual>'
+	elif isinstance(value, ast.UnaryOp) and isinstance(value.op, ast.USub):
+		result = -_parse_option_spec(value.operand)
+	elif hasattr(ast, 'NameConstant') and isinstance(value, getattr(ast, 'NameConstant')):
+		result = value.value
 	else:
 		result = '<manual>'
 	return result
@@ -234,8 +238,16 @@ def _process_enum(node, parents, result, enums, enums_use_hash):
 		enum_name = parents[-1].targets[0].id
 	elif len(node.args) == 2:
 		enum_name = node.args[1].id
-	kw_iter = imap(lambda kw: (kw.arg, kw.value.id), result['node'].keywords)
-	enums_use_hash[enum_name] = ('use_hash', 'False') not in kw_iter
+
+	def _iter_kw():
+		for entry in result['node'].keywords:
+			try:
+				value = entry.value.id
+			except Exception:  # API change
+				value = str(entry.value.value)
+			yield (entry.arg, value)
+	kw_list = list(_iter_kw())
+	enums_use_hash[enum_name] = ('use_hash', 'False') not in kw_list
 	try:
 		enums.append((enum_name, lmap(lambda x: x.s, node.args[0].elts)))
 	except Exception:

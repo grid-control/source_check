@@ -51,7 +51,7 @@ def _update_header(fn):
 	old_dir = os.getcwd()
 	os.chdir(os.path.dirname(fn))
 	cmd = 'git log --follow --format="format:%ai %an <%ae> %H" ' + os.path.basename(fn)
-	gitlog = subprocess.check_output(cmd, shell=True)
+	gitlog = subprocess.check_output(cmd, shell=True).decode('utf-8')
 	os.chdir(old_dir)
 
 	def _skip_licence_updates(lines):

@@ -110,7 +110,8 @@ def _get_imported(fn, code_str):
 
 def _get_imported_libs(code_str):
 	list_imported = []
-	for import_line in ifilter(lambda line: line.lstrip().startswith('import '), code_str.splitlines()):
+	iter_imports = ifilter(lambda line: line.lstrip().startswith('import '), code_str.splitlines())
+	for import_line in iter_imports:
 		import_line = import_line.split('#')[0].strip()
 		list_imported.extend(imap(str.strip, import_line.replace('import ', '').split(',')))
 	return list_imported

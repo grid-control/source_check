@@ -3,43 +3,44 @@ cd "$TOOLDIR"
 TOOLDIR="$(pwd -P)"
 BASEDIR="$TOOLDIR/../.."
 export PYTHONPATH="$BASEDIR/packages:$PYTHONPATH"
+PYTHONEXEC=python
 
 echo "============================="
 echo "self check"
 echo "-----------------------------"
 TOOLS="$(ls *.py | grep -v create_graph.py)"
-python "$TOOLDIR/imports_all.py" $TOOLS
-python "$TOOLDIR/imports_check.py" $TOOLS
-python "$TOOLDIR/imports_sort.py" $TOOLS
-python "$TOOLDIR/check_fun_name.py" $TOOLS
-python "$TOOLDIR/devtool_sort_code.py" $TOOLS 2>&1 | grep -v WARNING
-python "$TOOLDIR/header_copyright.py" $TOOLS 2>&1 | grep changed
+$PYTHONEXEC "$TOOLDIR/imports_all.py" $TOOLS
+$PYTHONEXEC "$TOOLDIR/imports_check.py" $TOOLS
+$PYTHONEXEC "$TOOLDIR/imports_sort.py" $TOOLS
+$PYTHONEXEC "$TOOLDIR/check_fun_name.py" $TOOLS
+$PYTHONEXEC "$TOOLDIR/devtool_sort_code.py" $TOOLS 2>&1 | grep -v WARNING
+$PYTHONEXEC "$TOOLDIR/header_copyright.py" $TOOLS 2>&1 | grep changed
 
 echo "============================="
 echo "fixing version"
 echo "-----------------------------"
-python "$TOOLDIR/update_version.py"
+$PYTHONEXEC "$TOOLDIR/update_version.py"
 
 echo "============================="
 echo "fixing imports"
 echo "-----------------------------"
 
-python "$TOOLDIR/imports_all.py"
-python "$TOOLDIR/imports_check.py"
-python "$TOOLDIR/imports_sort.py"
+$PYTHONEXEC "$TOOLDIR/imports_all.py"
+$PYTHONEXEC "$TOOLDIR/imports_check.py"
+$PYTHONEXEC "$TOOLDIR/imports_sort.py"
 
 echo "============================="
 echo "checking names"
 echo "-----------------------------"
 
-python "$TOOLDIR/check_fun_name.py"
+$PYTHONEXEC "$TOOLDIR/check_fun_name.py"
 
 echo "============================="
 echo "fixing compat imports"
 echo "-----------------------------"
 
 cd "$BASEDIR"
-python "packages/python_compat.py" 2>&1 | grep -v requests | grep -v xmpp
+$PYTHONEXEC "packages/python_compat.py" 2>&1 | grep -v requests | grep -v xmpp
 cd - > /dev/null
 
 echo "============================="
@@ -47,7 +48,7 @@ echo "updating plugins"
 echo "-----------------------------"
 
 cd "$BASEDIR/packages"
-python "grid_control_update.py"
+$PYTHONEXEC "grid_control_update.py"
 cd - > /dev/null
 
 echo "============================="
@@ -72,25 +73,25 @@ ALL_FILES="\
 	go.py
 "
 FILTER_FILES=$(ls $ALL_FILES | grep -v Lexicon.py | grep -v cmsoverlay.py | grep -v lumiInfo.py | grep -v downloadFromSE.py)
-python "$TOOLDIR/devtool_sort_code.py" $FILTER_FILES 2>&1 | grep -v WARNING
+$PYTHONEXEC "$TOOLDIR/devtool_sort_code.py" $FILTER_FILES 2>&1 | grep -v WARNING
 cd - > /dev/null
 
 echo "============================="
 echo "updating headers"
 echo "-----------------------------"
 
-python "$TOOLDIR/header_copyright.py" | grep changed
+$PYTHONEXEC "$TOOLDIR/header_copyright.py" | grep changed
 
 echo "============================="
 echo "updating notice"
 echo "-----------------------------"
 
-python "$TOOLDIR/commit_stats.py"
+$PYTHONEXEC "$TOOLDIR/commit_stats.py"
 
 echo "============================="
 echo "updating documentation"
 echo "-----------------------------"
 
-python "docgen_parse_code.py"
-python "docgen_plugin_infos.py" | sort | uniq > /dev/null
-python "docgen.py" stop > "$BASEDIR/docs/config.rst"
+$PYTHONEXEC "docgen_parse_code.py"
+$PYTHONEXEC "docgen_plugin_infos.py" | sort | uniq > /dev/null
+$PYTHONEXEC "docgen.py" stop > "$BASEDIR/docs/config.rst"

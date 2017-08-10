@@ -13,7 +13,7 @@
 # | limitations under the License.
 
 import os, math, logging, get_file_list
-from python_compat import imap, sorted
+from python_compat import sorted
 
 
 def main():
@@ -29,12 +29,13 @@ def main():
 		# sort_by_contribution
 		return (-(changes_a_dict[author][0] - 0.5 * changes_a_dict[author][1]), author.split()[-1])
 
-	fp_r = open('docs/NOTICE')
-	fp_w = open('docs/NOTICE.new', 'w')
+	fp_r = open('docs/NOTICE', 'rb')
+	fp_w = open('docs/NOTICE.new', 'wb')
 	wrote_hiscore = False
 	for line in fp_r:
+		line = line.decode('utf-8')
 		if not line.startswith(' ' * 15):
-			fp_w.write(line)
+			fp_w.write(line.encode('utf-8'))
 		elif not wrote_hiscore:
 			for hs_line in write_hiscore(fp_w, changes_a_dict, email_dict, _sort_by):
 				if 'Fred Stober' not in hs_line:
@@ -50,7 +51,12 @@ def parse_info():
 	commits_dict = {}
 	changes_a_dict = {}
 	changes_fn_dict = {}
-	for line in imap(str.strip, open('commit.log')):
+	for line in open('commit.log'):
+		try:
+			line = line.decode('utf-8')
+		except Exception:
+			pass
+		line = line.strip()
 		if ('|' in line) and ('@' in line):
 			author, email = line.split('|')[1:]
 			email_dict[author] = email
@@ -76,7 +82,7 @@ def write_hiscore(stream, changes_a_dict, email_dict, sort_fun):
 		word_cloud_weight = int(1 + 1 * math.log(1 - sort_fun(author)[0]))
 		log_msg += '%s:%s' % (author.replace(' ', ''), word_cloud_weight)
 		logging.warning(log_msg)
-		notice_msg = ' ' * 15 + '%-23s <%s>\n' % (author.decode('utf-8'), email_dict[author].lower())
+		notice_msg = ' ' * 15 + '%-23s <%s>\n' % (author, email_dict[author].lower())
 		yield notice_msg
 	yield '\n'
 	yield ' ' * 15 + '(in order of development activity - excluding libraries)'
