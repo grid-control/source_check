@@ -965,6 +965,13 @@
 		"delay output": {
 			"user_text": "Toggle between direct output of stdout/stderr to the sandbox or indirect output to local tmp during job execution"
 		},
+		"delete": {
+			"short": "<job selector>",
+			"user_text": "The unfinished jobs selected by this expression are cancelled"
+		},
+		"delete jobs": {
+			"user_text": "Toggle interactivity of job deletion requests"
+		},
 		"delimeter block key": {
 			"short": "<delimeter>:<start>:<end>",
 			"user_text": "Specify the the delimeter and range to derive a block key"
