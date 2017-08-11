@@ -30,6 +30,8 @@ def main():
 		result['args'] = lmap(_parse_option_spec, result['node'].args)
 		result['kwargs'] = {}
 		for keyword in result['node'].keywords:
+			if not keyword.arg:
+				continue
 			result['kwargs'][keyword.arg] = _parse_option_spec(keyword.value)
 		result['api'] = result['fqfn'].split('.')[-1]
 		result['scope'] = result['fqfn'].split('.')[-2]
