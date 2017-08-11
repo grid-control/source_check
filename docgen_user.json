@@ -1762,6 +1762,9 @@
 		"workdir create": {
 			"user_text": "Skip interactive question about workdir creation"
 		},
+		"workdir recreate": {
+			"user_text": "Skip interactive question about abandoning the current workdir"
+		},
 		"workdir space": {
 			"example": 50,
 			"location": "global",

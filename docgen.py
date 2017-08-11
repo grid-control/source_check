@@ -13,7 +13,7 @@
 # | limitations under the License.
 
 import sys, json
-from python_compat import identity, imap, lfilter, lidfilter, lmap, set
+from python_compat import identity, imap, lfilter, lidfilter, lmap, set, sorted
 
 
 def main():
@@ -50,7 +50,7 @@ def main():
 			if location not in user_location_list:
 				_display_location_deep(location, cc_by_location, user_dict, plugin_infos, enum_info_dict)
 
-	for entry in user_dict['options']:
+	for entry in sorted(user_dict['options']):
 		if entry not in user_key_used:
 			_output('Unused: %r %r' % (entry, user_dict['options'][entry]))
 			_output('')
@@ -562,7 +562,7 @@ def _str_dict_cfg(value, parser=identity, strfun=str):
 	result = ''
 	if srcdict.get(None) is not None:
 		result = strfun(srcdict[None])
-	key_value_iter = imap(lambda k: '%s => %s' % (k, strfun(srcdict[k])), srckeys)
+	key_value_iter = imap(lambda k: '%s => %s' % (k, strfun(srcdict[k])), sorted(srckeys))
 	return (result + str.join(' <newline> ', key_value_iter)).strip()
 
 
