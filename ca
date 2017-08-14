@@ -1,0 +1,26 @@
+#!/bin/bash
+
+cd $(dirname $0)/../..
+ALL_FILES="\
+        packages/grid_control/*.py \
+        packages/grid_control/backends/*.py \
+        packages/grid_control/backends/condor_wms/*.py \
+        packages/grid_control/config/*.py \
+        packages/grid_control/datasets/*.py \
+        packages/grid_control/parameters/*.py \
+        packages/grid_control/tasks/*.py \
+        packages/grid_control/utils/*.py \
+        packages/grid_control_cms/*.py \
+        packages/grid_control_gui/*.py \
+        packages/grid_control_usb/*.py \
+        packages/grid_control_tests/*.py \
+        packages/hpfwk/*.py \
+        scripts/*.py
+	setup.py
+	go.py
+"
+FILTER_FILES=$(ls $ALL_FILES | grep -v Lexicon.py | grep -v cmsoverlay.py | grep -v lumiInfo.py | grep -v downloadFromSE.py)
+echo sorting $FILTER_FILES
+$(dirname $0)/devtool_sort_code.py $FILTER_FILES
+echo checking $FILTER_FILES
+$(dirname $0)/cf $FILTER_FILES

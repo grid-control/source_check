@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export PYTHONPATH=$PYTHONPATH:$(dirname $0)/..
+echo "PYLINT >>>>"
+pylint --rcfile=$(dirname $0)/../../.pylintrc --load-plugins pylint_gc -r n -f colorized $@
+echo "PEP8 >>>>"
+pep8 $@
+echo "FLAKE8 >>>>"
+flake8 $@
+

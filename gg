@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd $(dirname $0)/../..
+grep --color "$@" -Ir testsuite scripts packages | grep -v addHEADER.log | grep -v "^packages/requests" | grep --color "$@"
+
