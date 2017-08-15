@@ -272,9 +272,9 @@
 		"UserParameterFactory": "parameters",
 		"_gc_create_workflow": "global",
 		"_get_cms_cert": "CMS grid proxy",
+		"_logging_configure_handler": "logging",
+		"_logging_create_handlers": "logging",
 		"_setup_work_path": "global",
-		"logging_configure_handler": "logging",
-		"logging_create_handlers": "logging",
 		"logging_setup": "logging"
 	},
 	"location_whitelist": [
@@ -602,7 +602,7 @@
 		},
 		"<name:logger_name> debug file": {
 			"default_map": {
-				"<call:get_debug_file_candidates()>": "'\"<gc dir>/debug.log\" \"/tmp/gc.debug.<uid>.<pid>\" \"~/gc.debug\"'"
+				"<call:_get_debug_file_candidates()>": "'\"<gc dir>/debug.log\" \"/tmp/gc.debug.<uid>.<pid>\" \"~/gc.debug\"'"
 			},
 			"user_text": "Logfile used by debug file logger. In case multiple paths are specified, the first usable path will be used"
 		},
