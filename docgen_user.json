@@ -1730,6 +1730,9 @@
 		"wall time": {
 			"user_text": "Requested wall time also used for checking the proxy lifetime"
 		},
+		"wall time mode": {
+			"user_text": "Whether to kill a job after the requested wall time elapsed. Only implemented for the condor backend at the moment."
+		},
 		"warn sb size": {
 			"user_text": "Warning threshold for large sandboxes (in MB)"
 		},
