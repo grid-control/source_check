@@ -12,7 +12,7 @@
 # | See the License for the specific language governing permissions and
 # | limitations under the License.
 
-import os, math, logging, get_file_list
+import json, os, math, logging, get_file_list
 from python_compat import sorted
 
 
@@ -76,14 +76,18 @@ def parse_info():
 
 
 def write_hiscore(stream, changes_a_dict, email_dict, sort_fun):
+	word_cloud_dict = {}
 	for author in sorted(changes_a_dict, key=sort_fun):
 		log_msg = '(%6d:%6d) ' % changes_a_dict[author]
 		log_msg += '%7.1f ' % (-sort_fun(author)[0])
-		word_cloud_weight = int(1 + 1 * math.log(1 - sort_fun(author)[0]))
+		word_cloud_weight = 1 + .1 * math.log(1 - sort_fun(author)[0])
 		log_msg += '%s:%s' % (author.replace(' ', ''), word_cloud_weight)
+		word_cloud_dict[author.replace(' ', '')] = word_cloud_weight
 		logging.warning(log_msg)
 		notice_msg = ' ' * 15 + '%-23s <%s>\n' % (author, email_dict[author].lower())
 		yield notice_msg
+	# for usage with wordcloud (generate_from_frequencies)
+	logging.warning(json.dumps(word_cloud_dict, indent=4))
 	yield '\n'
 	yield ' ' * 15 + '(in order of development activity - excluding libraries)'
 
