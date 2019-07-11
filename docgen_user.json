@@ -849,6 +849,9 @@
 		"backend": {
 			"user_text": "Select the backend to use for job submission"
 		},
+		"blacklist nodes": {
+			"user_text": "Nodes to blacklist (for temporary reasons), e.g. ``blacklist nodes = bird9998.desy.de bird9999.desy.de``"
+		},
 		"cancel": {
 			"short": "<job selector>",
 			"user_text": "The unfinished jobs selected by this expression are cancelled"
@@ -1692,6 +1695,9 @@
 				"<call:get_local_username()>": "<local user name>"
 			},
 			"user_text": "Specify batch system user name"
+		},
+		"user requirements": {
+			"user_text": "Condor user requirements, e.g.\n\n.. code:: ini\n\n  [condor]\n  user requirements = ( OpSysAndVer == \"CentOS7\" || OpSysAndVer == \"SL6\")"
 		},
 		"username": {
 			"default_map": {
