@@ -707,7 +707,7 @@
 			"user_text": "Specify the files that are transferred over this storage channel"
 		},
 		"<name:storage_channel> force": {
-			"user_text": "Specify the files that are transferred over this storage channel"
+			"user_text": "Force overwriting of files transferred over this storage channel"
 		},
 		"<name:storage_channel> min size": {
 			"default_map": {
