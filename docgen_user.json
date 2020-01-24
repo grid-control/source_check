@@ -1246,6 +1246,9 @@
 		"min lifetime": {
 			"user_text": "Specify the minimal lifetime of the proxy that is required to enable job submission"
 		},
+		"naf project": {
+			"user_text": "Select naf project, e.g. af-cms"
+		},
 		"new proxy lifetime": {
 			"user_text": "Specify the new lifetime for a newly created grid proxy"
 		},
