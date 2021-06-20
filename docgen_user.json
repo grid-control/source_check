@@ -508,6 +508,9 @@
 		"<name:datasource_name> partition metadata": {
 			"user_text": "Specify list of dataset metadata to forward to the job environment"
 		},
+		"<name:datasource_name> partition metadata secondary file names": {
+			"user_text": "Specify the name of the metdata variable that is used as source for the list of files of the secondary dataset"
+		},
 		"<name:datasource_name> partition processor": {
 			"user_text": "Specify list of plugins that process partitions"
 		},
@@ -528,6 +531,9 @@
 				"<call:datasource_name.upper()>": "'DATASET'"
 			},
 			"user_text": "Specify prefix for variables containing dataset information"
+		},
+		"<name:datasource_name> partition variable secondary file names": {
+			"user_text": "Specify the name of the variable that will contain the list of files of the secondary dataset"
 		},
 		"<name:datasource_name> partition variable skip events": {
 			"user_text": "Specify variable name containing the number of events to skip"
@@ -1532,6 +1538,9 @@
 		},
 		"se project area": {
 			"user_text": "Toggle to specify how the CMSSW project area should be transferred to the worker node"
+		},
+		"secondary dataset": {
+			"user_text": "Specify the list of parent datasets that should be selected during the secondary dataset discovery"
 		},
 		"seeds": {
 			"default_map": {
